@@ -1,0 +1,228 @@
+#include <iostream>
+#include <cstring>
+#include <iomanip>
+
+using namespace std;
+
+struct Player {
+    char name[50];
+    int jerseyNo;
+    int runs;
+    int wickets;
+};
+
+Player* players = nullptr;
+int playerCount = 0;
+
+void addPlayer();
+void searchPlayer();
+void updatePlayer();
+void deletePlayer();
+void findMaxWicketPlayer();
+void findMaxRunPlayer();
+void displayPlayers();
+
+int main() {
+    char continueFlag;
+    int choice;
+
+    cout << "How many players do you want to add? ";
+    cin >> playerCount;
+
+    players = new Player[playerCount];
+
+    for (int i = 0; i < playerCount; ++i) {
+        cout << "Enter name: ";
+        cin >> players[i].name;
+        cout << "Enter jersey number: ";
+        cin >> players[i].jerseyNo;
+        cout << "Enter runs: ";
+        cin >> players[i].runs;
+        cout << "Enter wickets: ";
+        cin >> players[i].wickets;
+    }
+
+    do {
+        cout << "\nMenu: \n";
+        cout << "1. Add Player \n";
+        cout << "2. Search Player \n";
+        cout << "3. Update Player \n";
+        cout << "4. Delete Player \n";
+        cout << "5. Find Player with Max Wickets \n";
+        cout << "6. Find Player with Max Runs \n";
+        cout << "7. Display All Players \n";
+        cout << "Choose an option: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addPlayer();
+                break;
+            case 2:
+                searchPlayer();
+                break;
+            case 3:
+                updatePlayer();
+                break;
+            case 4:
+                deletePlayer();
+                break;
+            case 5:
+                findMaxWicketPlayer();
+                break;
+            case 6:
+                findMaxRunPlayer();
+                break;
+            case 7:
+                displayPlayers();
+                break;
+            default:
+                cout << "Invalid choice! Please choose again.\n";
+        }
+
+        cout << "Do you want to continue (Y/N)? ";
+        cin >> continueFlag;
+    } while (continueFlag == 'Y' || continueFlag == 'y');
+
+    delete[] players;
+    return 0;
+}
+
+void addPlayer() {
+    Player* newPlayers = new Player[playerCount + 1];
+
+    for (int i = 0; i < playerCount; ++i) {
+        newPlayers[i] = players[i];
+    }
+
+    cout << "Enter name: ";
+    cin >> newPlayers[playerCount].name;
+    cout << "Enter jersey number: ";
+    cin >> newPlayers[playerCount].jerseyNo;
+    cout << "Enter runs: ";
+    cin >> newPlayers[playerCount].runs;
+    cout << "Enter wickets: ";
+    cin >> newPlayers[playerCount].wickets;
+
+    delete[] players;
+    players = newPlayers;
+    playerCount++;
+}
+
+void searchPlayer() {
+    int jerseyNo;
+    cout << "Enter jersey number to search: ";
+    cin >> jerseyNo;
+
+    for (int i = 0; i < playerCount; ++i) {
+        if (players[i].jerseyNo == jerseyNo) {
+            cout << "Player found: \n";
+            cout << "Name: " << players[i].name << ", Runs: " << players[i].runs << ", Wickets: " << players[i].wickets << "\n";
+            return;
+        }
+    }
+    cout << "Player with jersey number " << jerseyNo << " not found.\n";
+}
+
+void updatePlayer() {
+    int jerseyNo;
+    cout << "Enter jersey number to update: ";
+    cin >> jerseyNo;
+
+    for (int i = 0; i < playerCount; ++i) {
+        if (players[i].jerseyNo == jerseyNo) {
+            cout << "Enter new details: \n";
+            cout << "Enter name: ";
+            cin >> players[i].name;
+            cout << "Enter runs: ";
+            cin >> players[i].runs;
+            cout << "Enter wickets: ";
+            cin >> players[i].wickets;
+            cout << "Player updated successfully.\n";
+            return;
+        }
+    }
+    cout << "Player with jersey number " << jerseyNo << " not found.\n";
+}
+
+void deletePlayer() {
+    int jerseyNo;
+    cout << "Enter jersey number to delete: ";
+    cin >> jerseyNo;
+
+    for (int i = 0; i < playerCount; ++i) {
+        if (players[i].jerseyNo == jerseyNo) {
+            for (int j = i; j < playerCount - 1; ++j) {
+                players[j] = players[j + 1];
+            }
+            playerCount--;
+
+            Player* newPlayers = new Player[playerCount];
+            for (int k = 0; k < playerCount; ++k) {
+                newPlayers[k] = players[k];
+            }
+
+            delete[] players;
+            players = newPlayers;
+
+            cout << "Player deleted successfully.\n";
+            return;
+        }
+    }
+    cout << "Player with jersey number " << jerseyNo << " not found.\n";
+}
+
+void findMaxWicketPlayer() {
+    if (playerCount == 0) {
+        cout << "No players available.\n";
+        return;
+    }
+
+    int maxWickets = players[0].wickets;
+    int maxWicketIndex = 0;
+
+    for (int i = 1; i < playerCount; ++i) {
+        if (players[i].wickets > maxWickets) {
+            maxWickets = players[i].wickets;
+            maxWicketIndex = i;
+        }
+    }
+    cout << "Player with max wickets: " << players[maxWicketIndex].name << ", Wickets: " << players[maxWicketIndex].wickets << "\n";
+}
+
+void findMaxRunPlayer() {
+    if (playerCount == 0) {
+        cout << "No players available.\n";
+        return;
+    }
+
+    int maxRuns = players[0].runs;
+    int maxRunIndex = 0;
+
+    for (int i = 1; i < playerCount; ++i) {
+        if (players[i].runs > maxRuns) {
+            maxRuns = players[i].runs;
+            maxRunIndex = i;
+        }
+    }
+    cout << "Player with max runs: " << players[maxRunIndex].name << ", Runs: " << players[maxRunIndex].runs << "\n";
+}
+
+void displayPlayers() {
+    if (playerCount == 0) {
+        cout << "No players available.\n";
+        return;
+    }
+
+    cout << "-------------------------------------------------------------\n";
+    cout << "| Name              | Jersey No. | Runs       | Wickets    |\n";
+    cout << "-------------------------------------------------------------\n";
+    for (int i = 0; i < playerCount; ++i) {
+        cout << "| " << setw(17) << left << players[i].name;
+        cout << "| " << setw(10) << left << players[i].jerseyNo;
+        cout << "| " << setw(10) << left << players[i].runs;
+        cout << "| " << setw(10) << left << players[i].wickets;
+        cout << "|\n";
+    }
+    cout << "-------------------------------------------------------------\n";
+}
